@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "address-scraper",
     "db",
     "utils",
 ]
@@ -33,8 +34,9 @@ include = ["apps/**/*.py", "packages/**/*.py"]
 cache-dir=".cache"
 
 [tool.uv.workspace]
-members = ["packages/utils", "packages/db"]
+members = ["packages/utils", "packages/db", "apps/address_scraper"]
 
 [tool.uv.sources]
 utils = { workspace = true }
 db = { workspace = true }
+address-scraper = { workspace = true }

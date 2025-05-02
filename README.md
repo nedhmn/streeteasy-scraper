@@ -8,12 +8,12 @@
 
 ### `packages/utils` module
 
-- [ ] Logging configuration
+- [x] Logging configuration
 
 ### `packages/db` module
 
-- [ ] Database enigne, clients, and context managers
-- [ ] Database models
+- [x] Database enigne, clients, and context managers
+- [x] Database models
 
 ### `apps/address_scraper` module
 
