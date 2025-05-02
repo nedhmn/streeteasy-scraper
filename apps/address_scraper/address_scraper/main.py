@@ -14,7 +14,7 @@ setup_logger("address_scraper.log")
 logger = logging.getLogger("address_scraper.main")
 
 
-async def main():
+async def main() -> None:
     logger.info("Starting address scraping process.")
     async with httpx.AsyncClient() as http_client, get_async_db_session() as db_session:
         # Extract addresses
