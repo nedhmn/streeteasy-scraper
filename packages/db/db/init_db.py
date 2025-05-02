@@ -3,7 +3,7 @@ import logging
 
 from utils.logging import setup_logger
 
-from db.db import async_engine
+from db.connections import async_engine
 from db.models import Base
 
 setup_logger()
