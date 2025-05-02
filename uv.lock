@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 members = [
     "address-scraper",
     "db",
+    "streeteasy-scraper",
     "streeteasy-scraper-monorepo",
     "utils",
     "webhook",
@@ -1215,12 +1216,18 @@ wheels = [
 ]
 
 [[package]]
+name = "streeteasy-scraper"
+version = "0.1.0"
+source = { editable = "apps/streeteasy_scraper" }
+
+[[package]]
 name = "streeteasy-scraper-monorepo"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "address-scraper" },
     { name = "db" },
+    { name = "streeteasy-scraper" },
     { name = "utils" },
     { name = "webhook" },
 ]
@@ -1239,6 +1246,7 @@ dev = [
 requires-dist = [
     { name = "address-scraper", editable = "apps/address_scraper" },
     { name = "db", editable = "packages/db" },
+    { name = "streeteasy-scraper", editable = "apps/streeteasy_scraper" },
     { name = "utils", editable = "packages/utils" },
     { name = "webhook", editable = "apps/webhook" },
 ]
