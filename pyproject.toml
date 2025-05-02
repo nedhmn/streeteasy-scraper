@@ -8,6 +8,7 @@ dependencies = [
     "address-scraper",
     "db",
     "utils",
+    "webhook",
 ]
 
 [dependency-groups]
@@ -34,9 +35,10 @@ include = ["apps/**/*.py", "packages/**/*.py"]
 cache-dir=".cache"
 
 [tool.uv.workspace]
-members = ["packages/utils", "packages/db", "apps/address_scraper"]
+members = ["packages/utils", "packages/db", "apps/address_scraper", "apps/webhook"]
 
 [tool.uv.sources]
 utils = { workspace = true }
 db = { workspace = true }
 address-scraper = { workspace = true }
+webhook = { workspace = true }

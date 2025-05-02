@@ -51,9 +51,10 @@ class AddressExtractor:
             logger.error("NYC ClassB Dwelling XLS URL not found.")
             raise Exception("NYC ClassB Dwelling XLS URL not found.")
 
+        assert isinstance(xls_link_tag, bs4.element.Tag)
         xls_url = f"{self.settings.NYC_GOV_URL}/{xls_link_tag.get('href')}"
-        logger.debug("XLS URL found: %s", xls_url)
 
+        logger.debug("XLS URL found: %s", xls_url)
         return xls_url
 
     async def _get_addresses_from_xls(self, xls_url: str) -> list[str]:

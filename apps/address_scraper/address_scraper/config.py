@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     NYC_GOV_URL: str = Field(default="https://www.nyc.gov/")
     STREETEASY_BASE_URL: str = Field(default="https://streeteasy.com/search")
     BOROUGHS_TO_KEEP: Annotated[list[str], NoDecode] = Field(
-        default="MANHATTAN",
+        default="MANHATTAN",  # type: ignore
         description="Boroughs to keep when saving addresses to database.",
     )
 
