@@ -19,15 +19,23 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
 
     @property
-    def DATABASE_URL(self) -> str:
+    def DATABASE_URL_BODY(self) -> str:
         # Set host to localhost if enviornment is local
         host = "localhost" if self.ENVIRONMENT == "local" else self.POSTGRES_HOST
 
         return (
-            f"postgresql+asyncpg://{self.POSTGRES_USER}:"
+            f"{self.POSTGRES_USER}:"
             f"{self.POSTGRES_PASSWORD}@{host}:"
             f"{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
+
+    @property
+    def ASYNC_DATABASE_URL(self) -> str:
+        return f"postgresql+asyncpg://{self.DATABASE_URL_BODY}"
+
+    @property
+    def SYNC_DATABASE_URL(self) -> str:
+        return f"postgresql://{self.DATABASE_URL_BODY}"
 
 
 settings = Settings()

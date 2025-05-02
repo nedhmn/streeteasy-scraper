@@ -1,13 +1,34 @@
-from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from contextlib import asynccontextmanager, contextmanager
+from typing import AsyncGenerator, Generator
 
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from db.config import settings
 
-async_engine = create_async_engine(settings.DATABASE_URL)
+# Sync engine
+sync_engine = create_engine(settings.SYNC_DATABASE_URL, pool_pre_ping=True)
+sync_db_session = sessionmaker(bind=sync_engine, autocommit=False, autoflush=False)
+
+
+@contextmanager
+def get_db_session() -> Generator[Session, None, None]:
+    session = sync_db_session()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+# Async engine
+async_engine = create_async_engine(settings.ASYNC_DATABASE_URL)
 async_db_session = async_sessionmaker(
-    async_engine, expire_on_commit=False, class_=AsyncSession
+    bind=async_engine, expire_on_commit=False, class_=AsyncSession
 )
 
 
