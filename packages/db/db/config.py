@@ -24,7 +24,7 @@ class Settings(BaseSettings):
         host = "localhost" if self.ENVIRONMENT == "local" else self.POSTGRES_HOST
 
         return (
-            f"postgresql://{self.POSTGRES_USER}:"
+            f"postgresql+asyncpg://{self.POSTGRES_USER}:"
             f"{self.POSTGRES_PASSWORD}@{host}:"
             f"{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )

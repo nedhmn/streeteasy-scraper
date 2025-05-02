@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.11.4",
     "pydantic-settings>=2.9.1",
     "sqlalchemy>=2.0.40",
+    "utils",
 ]
 
 [build-system]
@@ -17,3 +18,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["db"]
+
+[tool.uv.sources]
+utils = { workspace = true }
