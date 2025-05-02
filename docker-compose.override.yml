@@ -1,0 +1,5 @@
+services:
+  postgres:
+    restart: "no"
+    ports:
+      - "5432:5432"
