@@ -3,10 +3,16 @@ requires-python = ">=3.12"
 
 [manifest]
 members = [
+    "address-scraper",
     "db",
     "streeteasy-scraper",
     "utils",
 ]
+
+[[package]]
+name = "address-scraper"
+version = "0.1.0"
+source = { editable = "apps/address_scraper" }
 
 [[package]]
 name = "annotated-types"
@@ -720,6 +726,7 @@ name = "streeteasy-scraper"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "address-scraper" },
     { name = "db" },
     { name = "utils" },
 ]
@@ -736,6 +743,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "address-scraper", editable = "apps/address_scraper" },
     { name = "db", editable = "packages/db" },
     { name = "utils", editable = "packages/utils" },
 ]
