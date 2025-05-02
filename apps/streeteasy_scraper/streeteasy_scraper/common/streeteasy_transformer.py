@@ -1,6 +1,7 @@
 import bs4
 from db.models import Address
 from dataclasses import dataclass
+from streeteasy_scraper.config import Settings
 
 
 @dataclass
@@ -10,8 +11,8 @@ class Unit:
 
 
 class StreetEasyTransformer:
-    def __init__(self):
-        pass
+    def __init__(self, settings: Settings):
+        self.settings = settings
 
     def get_address_data(self, html: str, address: Address) -> Address:
         soup = bs4.BeautifulSoup(html, "html.parser")
@@ -22,6 +23,9 @@ class StreetEasyTransformer:
         if not unit_data:
             address.status = "success"
             return address
+
+        # Get address data
+        has_active_listing = self._has_active_listing(html)
 
         return address
 
@@ -44,9 +48,13 @@ class StreetEasyTransformer:
 
         return Unit(unit_name, unit_address)
 
-    @staticmethod
-    def _has_active_listing() -> bool:
-        pass
+    def _has_active_listing(self, html: str) -> bool:
+        """Checks if html has no results"""
+        lowered_html = html.lower()
+        return not any(
+            pattern.lower() in lowered_html
+            for pattern in self.settings.NO_RESULTS_PATTERNS
+        )
 
     @staticmethod
     def _is_address_match() -> bool:

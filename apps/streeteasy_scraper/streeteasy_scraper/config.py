@@ -43,6 +43,15 @@ class Settings(BaseSettings):
         default=3, description="Sync pipeline tenacity retry wait time in seconds"
     )
     STREETEASY_BASE_URL: str = Field(default="https://streeteasy.com/search")
+    NO_RESULTS_PATTERNS: list[str] = Field(
+        default=[
+            "no results found",
+            "we couldn't find any matches",
+            "try searching in a different area",
+            "there were no matches for",
+        ],
+        description="When scraping StreetEasy, if a page matches any of these patterns then there were no results found",
+    )
 
 
 settings = Settings()
