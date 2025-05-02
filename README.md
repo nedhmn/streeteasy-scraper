@@ -3,3 +3,52 @@
 <div align="center" style="margin-bottom: 20px">
     <img src="./docs/src/assets/scraper-hero.png" alt="Scraper mascot hero section" height="350px">
 </div>
+
+## TODO
+
+### `packages/utils` module
+
+- [ ] Logging configuration
+
+### `packages/db` module
+
+- [ ] Database enigne, clients, and context managers
+- [ ] Database models
+
+### `apps/address_scraper` module
+
+- [ ] `address_extractor` class
+- [ ] `address_transformer` class
+- [ ] Load transformed addresses locally to `/data` for demonstration
+
+### `apps/webhook` module
+
+- [ ] POST `/bd-webhook` to take BrightData's webhook payloads
+- [ ] Update database async jobs with results status to be extracted later in async pipeline
+
+### `apps/streeteasy_scraper/sync_api` module
+
+- [ ] `sync_api` module
+- [ ] `streeteasy_extractor` class via multithreading serp api
+- [ ] `streeteasy_transformer` class
+- [ ] Load transformed data to database
+
+### `apps/streeteasy_scraper/async_api` module
+
+- [ ] `async_api` module
+- [ ] `job_submitter` class to send jobs to async serp api and initialize jobs in database
+- [ ] `job_results_extractor` class to extract job results when ready
+- [ ] Use the transformer from sync api to transform results
+- [ ] Load transformed data to database
+
+### `notebooks/result_analysis`
+
+- [ ] Analysis finished jobs in a Jupyter notebook
+- [ ] Convert notebook into markdown with `nb-convert`
+
+### `docs`
+
+- [ ] Getting started
+- [ ] Installation
+- [ ] Configuration
+- [ ] Guides
