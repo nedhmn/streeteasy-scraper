@@ -6,7 +6,7 @@ from sqlalchemy import TIMESTAMP, Index, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-Status = Literal["created", "queued", "success", "failed"]
+Status = Literal["pending", "ready_to_process", "success", "failed"]
 
 
 class Base(DeclarativeBase):
@@ -36,7 +36,7 @@ class Address(BaseModel):
     __tablename__ = "addresses"
     __table_args__ = (Index("ix_addresses_status", "status"),)
 
-    brightdata_response_id: Mapped[str] = mapped_column(
+    brightdata_response_id: Mapped[str | None] = mapped_column(
         comment="Job response ID from BrightData."
     )
     input_address: Mapped[str] = mapped_column(
@@ -51,13 +51,14 @@ class Address(BaseModel):
     streeteasy_unit_address: Mapped[str | None] = mapped_column(
         comment="Full address of the unit from the matched StreetEasy listing."
     )
-    has_active_listing: Mapped[bool] = mapped_column(
+    has_active_listing: Mapped[bool | None] = mapped_column(
         comment="Whether StreetEasy has an active listing for the provided address."
     )
-    is_address_match: Mapped[bool] = mapped_column(
+    is_address_match: Mapped[bool | None] = mapped_column(
         comment="Whether the address returned by StreetEasy matches the input address."
     )
     status: Mapped[Status] = mapped_column(
         nullable=False,
+        default="pending",
         comment="The current processing status of the address lookup job.",
     )
