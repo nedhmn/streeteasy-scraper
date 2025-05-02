@@ -3,6 +3,6 @@
 set -e
 set -x
 
-mypy apps packages
-ruff check apps packages
-ruff format apps packages --check
+mypy packages
+ruff check packages
+ruff format packages --check
