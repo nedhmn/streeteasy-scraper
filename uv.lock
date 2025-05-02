@@ -41,6 +41,18 @@ requires-dist = [
 ]
 
 [[package]]
+name = "aiometer"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/77/cf/9d81b707241b7fb6e8f6bd896cd43d1d93f9e126b5577d962de490bac644/aiometer-1.0.0.tar.gz", hash = "sha256:c492933dbd3a90c619473c3f242d00842ee274f6285a44b5d5fbee228a407056", size = 18427 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/40/0b/b8cd78305e788a9837c41c75183a1085df3c4e5d5758681fb623c33d5848/aiometer-1.0.0-py3-none-any.whl", hash = "sha256:a733315788ff9b474a924de865f9ecee2c29b8f5f9ac26db7660976affa6bf2e", size = 12436 },
+]
+
+[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1219,6 +1231,28 @@ wheels = [
 name = "streeteasy-scraper"
 version = "0.1.0"
 source = { editable = "apps/streeteasy_scraper" }
+dependencies = [
+    { name = "aiometer" },
+    { name = "db" },
+    { name = "httpx" },
+    { name = "pandas" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "tenacity" },
+    { name = "utils" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiometer", specifier = ">=1.0.0" },
+    { name = "db", editable = "packages/db" },
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic", specifier = ">=2.11.4" },
+    { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "tenacity", specifier = ">=9.1.2" },
+    { name = "utils", editable = "packages/utils" },
+]
 
 [[package]]
 name = "streeteasy-scraper-monorepo"
@@ -1259,6 +1293,15 @@ dev = [
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "ruff", specifier = ">=0.11.8" },
+]
+
+[[package]]
+name = "tenacity"
+version = "9.1.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/d4/2b0cd0fe285e14b36db076e78c93766ff1d529d70408bd1d2a5a84f1d929/tenacity-9.1.2.tar.gz", hash = "sha256:1169d376c297e7de388d18b4481760d478b0e99a777cad3a9c86e556f4b697cb", size = 48036 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/30/643397144bfbfec6f6ef821f36f33e57d35946c44a2352d3c9f0ae847619/tenacity-9.1.2-py3-none-any.whl", hash = "sha256:f77bf36710d8b73a50b2dd155c97b870017ad21afe6ab300326b0371b3b05138", size = 28248 },
 ]
 
 [[package]]
