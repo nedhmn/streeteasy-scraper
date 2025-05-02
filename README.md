@@ -1,4 +1,4 @@
-# Streeteasy Scraper
+# StreetEasy Scraper
 
 <div align="center" style="margin-bottom: 20px">
     <img src="./docs/src/assets/scraper-hero.png" alt="Scraper mascot hero section" height="350px">
@@ -32,6 +32,7 @@
 - [ ] `streeteasy_extractor` class via multithreading serp api
 - [ ] `streeteasy_transformer` class
 - [ ] Load transformed data to database
+- [ ] Dockerfile
 
 ### `apps/streeteasy_scraper/async_api` module
 
@@ -40,6 +41,7 @@
 - [ ] `job_results_extractor` class to extract job results when ready
 - [ ] Use the transformer from sync api to transform results
 - [ ] Load transformed data to database
+- [ ] Dockerfile
 
 ### `notebooks/result_analysis`
 
