@@ -11,11 +11,27 @@ class Settings(BaseSettings):
 
     BRIGHTDATA_USERNAME: str = Field(description="BrightData Web Unlocker API username")
     BRIGHTDATA_PASSWORD: str = Field(description="BrightData Web Unlocker API password")
+    BRIGHTDATA_HOST: str = Field(description="BrightData Web Unlocker API host name")
+
+    @property
+    def BRIGHTDATA_PROXY_URL(self) -> str:
+        return (
+            f"http://{self.BRIGHTDATA_USERNAME}"
+            f"{self.BRIGHTDATA_PASSWORD}"
+            f"{self.BRIGHTDATA_HOST}"
+        )
+
     BRIGHTDATA_API_TOKEN: str = Field(description="BrightData Web Unlocker API token")
     BRIGHTDATA_CUSTOMER_ID: str = Field(
         description="BrightData Web Unlocker API customer ID"
     )
     BRIGHTDATA_ZONE: str = Field(description="BrightData Web Unlocker API zone")
+
+    # Sync settings
+    HTTP_TIMEOUT: int = Field(default=30, description="Http client timeout in seconds")
+    THREADPOOL_MAX_WORKERS: int = Field(
+        default=30, description="ThreadPoolExecutor max workers"
+    )
 
 
 settings = Settings()
