@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 members = [
     "address-scraper",
     "db",
-    "streeteasy-scraper",
+    "streeteasy-scraper-monorepo",
     "utils",
     "webhook",
 ]
@@ -1215,7 +1215,7 @@ wheels = [
 ]
 
 [[package]]
-name = "streeteasy-scraper"
+name = "streeteasy-scraper-monorepo"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
