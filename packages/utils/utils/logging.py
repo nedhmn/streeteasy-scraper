@@ -5,7 +5,7 @@ from pathlib import Path
 
 def setup_logger(
     log_file: str | None = None,
-    level: int = logging.DEBUG,
+    level: int = logging.INFO,
     max_bytes: int = 32 * 1024 * 1024,
     backup_count: int = 5,
 ) -> None:

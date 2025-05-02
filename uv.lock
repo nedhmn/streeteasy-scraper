@@ -122,6 +122,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
+    { name = "utils" },
 ]
 
 [package.metadata]
@@ -130,6 +131,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.4" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "sqlalchemy", specifier = ">=2.0.40" },
+    { name = "utils", editable = "packages/utils" },
 ]
 
 [[package]]
