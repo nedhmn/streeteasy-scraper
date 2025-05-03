@@ -60,6 +60,10 @@ class Settings(BaseSettings):
     # Async settings
     AIOMETER_MAX_AT_ONCE: int = Field(default=30)
     AIOMETER_MAX_PER_SECOND: int = Field(default=10)
+    PROCESS_JOBS_BATCH_SIZE: int = Field(default=300)
+    PROCESS_JOBS_SLEEP_INTERVAL: int = Field(
+        default=30, description="Process jobs sleep interval in seconds"
+    )
 
     @property
     def BRIGHTDATA_SUBMIT_JOB_URL(self) -> str:

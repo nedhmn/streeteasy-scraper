@@ -32,7 +32,7 @@ async def run_async_submit_jobs() -> None:
 
         await aiometer.run_on_each(
             async_fn=functools.partial(submit_job, job_submitter=job_submitter),
-            args=pending_address_ids[:30],  # TODO: Remove subset when finished
+            args=pending_address_ids[:100],  # TODO: Remove subset when finished
             max_at_once=settings.AIOMETER_MAX_AT_ONCE,
             max_per_second=settings.AIOMETER_MAX_PER_SECOND,
         )
