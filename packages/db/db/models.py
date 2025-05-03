@@ -6,7 +6,7 @@ from sqlalchemy import TIMESTAMP, Index, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-Status = Literal["pending", "ready_to_process", "success", "failed"]
+Status = Literal["created", "pending", "ready_to_process", "success", "failed"]
 
 
 class Base(DeclarativeBase):
@@ -59,6 +59,6 @@ class Address(BaseModel):
     )
     status: Mapped[Status] = mapped_column(
         nullable=False,
-        default="pending",
+        default="created",
         comment="The current processing status of the address lookup job.",
     )

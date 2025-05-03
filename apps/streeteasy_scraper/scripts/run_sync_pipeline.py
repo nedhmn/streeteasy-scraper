@@ -33,10 +33,10 @@ def run_sync_pipeline() -> None:
 
     with get_http_client(settings) as http_client:
         with get_db_session() as session:
-            pending_addresses_id = get_pending_addresses_id(session)
+            addresses_id = get_created_addresses_id(session)
 
-        if not pending_addresses_id:
-            logger.info("No pending addresses found. Exiting.")
+        if not addresses_id:
+            logger.info("No created addresses found. Exiting.")
             return
 
         consecutive_error_count = 0
@@ -44,13 +44,13 @@ def run_sync_pipeline() -> None:
         with ThreadPoolExecutor(
             max_workers=settings.THREADPOOL_MAX_WORKERS
         ) as executor:
-            logger.info("Processing %d pending addresses", len(pending_addresses_id))
+            logger.info("Processing %d addresses", len(addresses_id))
 
             futures = [
                 executor.submit(
                     process_address_wrapper, address_id, transformer, http_client
                 )
-                for address_id in pending_addresses_id
+                for address_id in addresses_id
             ]
 
             for future in as_completed(futures):
@@ -75,9 +75,9 @@ def run_sync_pipeline() -> None:
                     consecutive_error_count = 0
 
 
-def get_pending_addresses_id(db_session: Session) -> Sequence[UUID]:
-    logger.info("Fetching pending addresses from database")
-    result = db_session.execute(select(Address.id).where(Address.status == "pending"))
+def get_created_addresses_id(db_session: Session) -> Sequence[UUID]:
+    logger.info("Fetching created addresses from database")
+    result = db_session.execute(select(Address.id).where(Address.status == "created"))
     addresses = result.scalars().all()
 
     return addresses
