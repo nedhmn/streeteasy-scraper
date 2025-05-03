@@ -1,7 +1,6 @@
 services:
   db:
     image: postgres:17-alpine
-    container_name: db
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -11,16 +10,11 @@ services:
       timeout: 10s
     env_file:
       - ./.env
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
-      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
     networks:
       - my_network
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: cloudflared
     restart: unless-stopped
     command: ["tunnel", "run"]
     env_file:
@@ -33,7 +27,6 @@ services:
   webhook:
     build:
       context: .
-    container_name: webhook
     depends_on:
       db:
         condition: service_healthy
@@ -49,7 +42,6 @@ services:
   prestart:
     build:
       context: .
-    container_name: prestart
     depends_on:
       db:
         condition: service_healthy
@@ -62,7 +54,6 @@ services:
   async_scraper:
     build:
       context: .
-    container_name: async_scraper
     restart: on-failure
     depends_on:
       db:
