@@ -17,21 +17,21 @@
 
 ### `apps/address_scraper` module
 
-- [ ] `address_extractor` class
-- [ ] `address_transformer` class
-- [ ] Load transformed addresses locally to `/data` for demonstration
+- [x] `address_extractor` class
+- [x] `address_transformer` class
+- [x] Load transformed addresses locally to `/data` for demonstration
 
 ### `apps/webhook` module
 
-- [ ] POST `/bd-webhook` to take BrightData's webhook payloads
-- [ ] Update database async jobs with results status to be extracted later in async pipeline
+- [x] POST `/bd-webhook` to take BrightData's webhook payloads
+- [x] Update database async jobs with results status to be extracted later in async pipeline
 
 ### `apps/streeteasy_scraper/sync_api` module
 
-- [ ] `sync_api` module
-- [ ] `streeteasy_extractor` class via multithreading serp api
-- [ ] `streeteasy_transformer` class
-- [ ] Load transformed data to database
+- [x] `sync_api` module
+- [x] `streeteasy_extractor` class via multithreading serp api
+- [x] `streeteasy_transformer` class
+- [x] Load transformed data to database
 - [ ] Dockerfile
 
 ### `apps/streeteasy_scraper/async_api` module
