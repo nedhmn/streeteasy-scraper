@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 members = [
     "address-scraper",
     "db",
+    "streeteasy-scraper",
     "streeteasy-scraper-monorepo",
     "utils",
     "webhook",
@@ -37,6 +38,18 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.4" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "utils", editable = "packages/utils" },
+]
+
+[[package]]
+name = "aiometer"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/77/cf/9d81b707241b7fb6e8f6bd896cd43d1d93f9e126b5577d962de490bac644/aiometer-1.0.0.tar.gz", hash = "sha256:c492933dbd3a90c619473c3f242d00842ee274f6285a44b5d5fbee228a407056", size = 18427 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/40/0b/b8cd78305e788a9837c41c75183a1085df3c4e5d5758681fb623c33d5848/aiometer-1.0.0-py3-none-any.whl", hash = "sha256:a733315788ff9b474a924de865f9ecee2c29b8f5f9ac26db7660976affa6bf2e", size = 12436 },
 ]
 
 [[package]]
@@ -198,6 +211,7 @@ version = "0.1.0"
 source = { editable = "packages/db" }
 dependencies = [
     { name = "asyncpg" },
+    { name = "psycopg2" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
@@ -207,6 +221,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
+    { name = "psycopg2", specifier = ">=2.9.10" },
     { name = "pydantic", specifier = ">=2.11.4" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "sqlalchemy", specifier = ">=2.0.40" },
@@ -831,6 +846,17 @@ wheels = [
 ]
 
 [[package]]
+name = "psycopg2"
+version = "2.9.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/62/51/2007ea29e605957a17ac6357115d0c1a1b60c8c984951c19419b3474cdfd/psycopg2-2.9.10.tar.gz", hash = "sha256:12ec0b40b0273f95296233e8750441339298e6a572f7039da5b260e3c8b60e11", size = 385672 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3d/16/4623fad6076448df21c1a870c93a9774ad8a7b4dd1660223b59082dd8fec/psycopg2-2.9.10-cp312-cp312-win32.whl", hash = "sha256:65a63d7ab0e067e2cdb3cf266de39663203d38d6a8ed97f5ca0cb315c73fe067", size = 1025113 },
+    { url = "https://files.pythonhosted.org/packages/66/de/baed128ae0fc07460d9399d82e631ea31a1f171c0c4ae18f9808ac6759e3/psycopg2-2.9.10-cp312-cp312-win_amd64.whl", hash = "sha256:4a579d6243da40a7b3182e0430493dbd55950c493d8c68f4eec0b302f6bbf20e", size = 1163951 },
+    { url = "https://files.pythonhosted.org/packages/ae/49/a6cfc94a9c483b1fa401fbcb23aca7892f60c7269c5ffa2ac408364f80dc/psycopg2-2.9.10-cp313-cp313-win_amd64.whl", hash = "sha256:91fd603a2155da8d0cfcdbf8ab24a2d54bca72795b90d2a3ed2b6da8d979dee2", size = 2569060 },
+]
+
+[[package]]
 name = "ptyprocess"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1215,12 +1241,40 @@ wheels = [
 ]
 
 [[package]]
+name = "streeteasy-scraper"
+version = "0.1.0"
+source = { editable = "apps/streeteasy_scraper" }
+dependencies = [
+    { name = "aiometer" },
+    { name = "db" },
+    { name = "httpx" },
+    { name = "pandas" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "tenacity" },
+    { name = "utils" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiometer", specifier = ">=1.0.0" },
+    { name = "db", editable = "packages/db" },
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic", specifier = ">=2.11.4" },
+    { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "tenacity", specifier = ">=9.1.2" },
+    { name = "utils", editable = "packages/utils" },
+]
+
+[[package]]
 name = "streeteasy-scraper-monorepo"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "address-scraper" },
     { name = "db" },
+    { name = "streeteasy-scraper" },
     { name = "utils" },
     { name = "webhook" },
 ]
@@ -1239,6 +1293,7 @@ dev = [
 requires-dist = [
     { name = "address-scraper", editable = "apps/address_scraper" },
     { name = "db", editable = "packages/db" },
+    { name = "streeteasy-scraper", editable = "apps/streeteasy_scraper" },
     { name = "utils", editable = "packages/utils" },
     { name = "webhook", editable = "apps/webhook" },
 ]
@@ -1251,6 +1306,15 @@ dev = [
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "ruff", specifier = ">=0.11.8" },
+]
+
+[[package]]
+name = "tenacity"
+version = "9.1.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/d4/2b0cd0fe285e14b36db076e78c93766ff1d529d70408bd1d2a5a84f1d929/tenacity-9.1.2.tar.gz", hash = "sha256:1169d376c297e7de388d18b4481760d478b0e99a777cad3a9c86e556f4b697cb", size = 48036 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/30/643397144bfbfec6f6ef821f36f33e57d35946c44a2352d3c9f0ae847619/tenacity-9.1.2-py3-none-any.whl", hash = "sha256:f77bf36710d8b73a50b2dd155c97b870017ad21afe6ab300326b0371b3b05138", size = 28248 },
 ]
 
 [[package]]
