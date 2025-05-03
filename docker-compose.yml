@@ -46,6 +46,37 @@ services:
     networks:
       - my_network
 
+  prestart:
+    build:
+      context: .
+    container_name: prestart
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["bash", "scripts/prestart.sh"]
+    env_file:
+      - ./.env
+    networks:
+      - my_network
+
+  async_scraper:
+    build:
+      context: .
+    container_name: async_scraper
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+      webhook:
+        condition: service_started
+    command: ["bash", "scripts/run_async_scraper.sh"]
+    env_file:
+      - ./.env
+    networks:
+      - my_network
+
 networks:
   my_network:
     driver: bridge
