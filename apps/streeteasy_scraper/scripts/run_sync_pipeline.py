@@ -1,5 +1,7 @@
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Sequence
+from uuid import UUID
 
 import httpx
 from db.connections import get_db_session
@@ -27,15 +29,29 @@ logger = logging.getLogger("streeteasy_scraper.run_sync_pipeline")
 def run_sync_pipeline():
     transformer = StreetEasyTransformer(settings)
 
-    with get_http_client(settings) as http_client, get_db_session() as db_session:
-        pending_addresses = get_pending_addresses(db_session)
+    with get_http_client(settings) as http_client:
+        # Get pending addresses id
+        with get_db_session() as session:
+            pending_addresses_id = get_pending_addresses_id(session)
 
-        for address in pending_addresses[:2]:
-            process_address_wrapper(address, transformer, http_client, db_session)
+        with ThreadPoolExecutor(
+            max_workers=settings.THREADPOOL_MAX_WORKERS
+        ) as executor:
+            # Create list of futures
+            futures = [
+                executor.submit(
+                    process_address_wrapper, address_id, transformer, http_client
+                )
+                for address_id in pending_addresses_id[:2]
+            ]
+
+            # Process address
+            for future in as_completed(futures):
+                future.result()
 
 
-def get_pending_addresses(db_session: Session) -> Sequence[Address]:
-    result = db_session.execute(select(Address).where(Address.status == "pending"))
+def get_pending_addresses_id(db_session: Session) -> Sequence[UUID]:
+    result = db_session.execute(select(Address.id).where(Address.status == "pending"))
     addresses = result.scalars().all()
 
     if not addresses:
@@ -45,16 +61,21 @@ def get_pending_addresses(db_session: Session) -> Sequence[Address]:
 
 
 def process_address_wrapper(
-    address: Address,
+    address_id: UUID,
     transformer: StreetEasyTransformer,
     http_client: httpx.Client,
-    db_session: Session,
-) -> None:
-    try:
-        process_address(address, transformer, http_client, db_session)
-    except RetryError:
-        address.status = "failed"
-        db_session.commit()
+):
+    with get_db_session() as db_session:
+        address = db_session.get(Address, address_id)
+        if not address:
+            logger.error("Address with id %s not found.", address_id)
+            return
+
+        try:
+            process_address(address, transformer, http_client, db_session)
+        except RetryError:
+            address.status = "failed"
+            db_session.commit()
 
 
 @retry(
@@ -70,15 +91,15 @@ def process_address(
     http_client: httpx.Client,
     db_session: Session,
 ) -> None:
-    # Turn input_address to url
+    # Create URL and update the address instance accordingly.
     url = input_address_to_url(address.input_address, settings.STREETEASY_BASE_URL)
     address.streeteasy_url = url
 
-    # Extract streeteasy html
+    # Extract StreetEasy HTML.
     response = http_client.get(url)
     response.raise_for_status()
 
-    # Transform and load streeteasy html
+    # Transform and load StreetEasy HTML.
     transformer.update_address(response.text, address)
     db_session.commit()
 
