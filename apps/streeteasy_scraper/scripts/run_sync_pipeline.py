@@ -6,6 +6,7 @@ from db.connections import get_db_session
 from db.models import Address
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from streeteasy_scraper.common.streeteasy_transformer import StreetEasyTransformer
 from streeteasy_scraper.config import settings
 from streeteasy_scraper.sync.utils import get_http_client, input_address_to_url
 from tenacity import (
@@ -24,11 +25,13 @@ logger = logging.getLogger("streeteasy_scraper.run_sync_pipeline")
 
 
 def run_sync_pipeline():
+    transformer = StreetEasyTransformer(settings)
+
     with get_http_client(settings) as http_client, get_db_session() as db_session:
         pending_addresses = get_pending_addresses(db_session)
 
-        for address in pending_addresses[:1]:
-            process_address_wrapper(address, http_client, db_session)
+        for address in pending_addresses[:2]:
+            process_address_wrapper(address, transformer, http_client, db_session)
 
 
 def get_pending_addresses(db_session: Session) -> Sequence[Address]:
@@ -42,10 +45,13 @@ def get_pending_addresses(db_session: Session) -> Sequence[Address]:
 
 
 def process_address_wrapper(
-    address: Address, http_client: httpx.Client, db_session: Session
+    address: Address,
+    transformer: StreetEasyTransformer,
+    http_client: httpx.Client,
+    db_session: Session,
 ) -> None:
     try:
-        process_address(address, http_client, db_session)
+        process_address(address, transformer, http_client, db_session)
     except RetryError:
         address.status = "failed"
         db_session.commit()
@@ -59,19 +65,22 @@ def process_address_wrapper(
     after=after_log(logger, logging.INFO),
 )
 def process_address(
-    address: Address, http_client: httpx.Client, db_session: Session
+    address: Address,
+    transformer: StreetEasyTransformer,
+    http_client: httpx.Client,
+    db_session: Session,
 ) -> None:
     # Turn input_address to url
     url = input_address_to_url(address.input_address, settings.STREETEASY_BASE_URL)
+    address.streeteasy_url = url
 
     # Extract streeteasy html
     response = http_client.get(url)
     response.raise_for_status()
-    logger.info(response.text[:5])
 
-    # TODO: Transform streeteasy html
-
-    # TODO: Load transformed data
+    # Transform and load streeteasy html
+    transformer.update_address(response.text, address)
+    db_session.commit()
 
 
 if __name__ == "__main__":
