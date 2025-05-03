@@ -69,5 +69,13 @@ class Settings(BaseSettings):
             f"zone={settings.BRIGHTDATA_ZONE}"
         )
 
+    @property
+    def BRIGHTDATA_GET_RESULT_BASE_URL(self) -> str:
+        return (
+            "https://api.brightdata.com/unblocker/get_result"
+            f"?customer={self.BRIGHTDATA_CUSTOMER_ID}"
+            f"&zone={self.BRIGHTDATA_ZONE}"
+        )
+
 
 settings = Settings()
