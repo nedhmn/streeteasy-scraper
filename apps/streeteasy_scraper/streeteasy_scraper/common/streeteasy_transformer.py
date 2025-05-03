@@ -17,7 +17,7 @@ class StreetEasyTransformer:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def update_address(self, html: str, address: Address) -> Address:
+    def update_address(self, html: str, address: Address) -> None:
         soup = bs4.BeautifulSoup(html, "html.parser")
 
         # Get unit data
@@ -25,7 +25,7 @@ class StreetEasyTransformer:
 
         if not unit_data:
             address.status = "success"
-            return address
+            return None
 
         # Get address data
         has_active_listing = self._has_active_listing(html)
@@ -40,8 +40,6 @@ class StreetEasyTransformer:
         address.is_address_match = is_address_match
         address.status = "success"
 
-        return address
-
     @staticmethod
     def _get_unit_data(soup: bs4.BeautifulSoup) -> Unit | None:
         building_summary = soup.find(
@@ -49,7 +47,9 @@ class StreetEasyTransformer:
         )
 
         if not building_summary:
-            return
+            return None
+
+        assert isinstance(building_summary, bs4.element.Tag)
 
         unit_name_tag = building_summary.find("h1")
         unit_name = unit_name_tag.get_text(strip=True) if unit_name_tag else None

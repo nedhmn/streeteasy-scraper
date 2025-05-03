@@ -27,7 +27,7 @@ setup_logger("run_sync_pipeline.log")
 logger = logging.getLogger("streeteasy_scraper.run_sync_pipeline")
 
 
-def run_sync_pipeline():
+def run_sync_pipeline() -> None:
     logger.info("Starting sync pipeline")
     transformer = StreetEasyTransformer(settings)
 
@@ -50,7 +50,7 @@ def run_sync_pipeline():
                 executor.submit(
                     process_address_wrapper, address_id, transformer, http_client
                 )
-                for address_id in pending_addresses_id[:5]
+                for address_id in pending_addresses_id
             ]
 
             for future in as_completed(futures):

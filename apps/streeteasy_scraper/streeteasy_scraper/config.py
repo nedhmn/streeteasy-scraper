@@ -1,7 +1,6 @@
 import httpx
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Literal
 
 
 class Settings(BaseSettings):
