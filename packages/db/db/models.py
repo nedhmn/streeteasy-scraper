@@ -6,7 +6,7 @@ from sqlalchemy import TIMESTAMP, Index, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-Status = Literal["pending", "ready_to_process", "success", "failed"]
+Status = Literal["pending", "sent_to_process", "ready_to_process", "success", "failed"]
 
 
 class Base(DeclarativeBase):

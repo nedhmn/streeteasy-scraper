@@ -57,5 +57,17 @@ class Settings(BaseSettings):
         description="When scraping StreetEasy, if a page matches any of these patterns then there were no results found",
     )
 
+    # Async settings
+    AIOMETER_MAX_AT_ONCE: int = Field(default=30)
+    AIOMETER_MAX_PER_SECOND: int = Field(default=10)
+
+    @property
+    def BRIGHTDATA_SUBMIT_JOB_URL(self) -> str:
+        return (
+            "https://api.brightdata.com/unblocker/req?"
+            f"customer={settings.BRIGHTDATA_CUSTOMER_ID}&"
+            f"zone={settings.BRIGHTDATA_ZONE}"
+        )
+
 
 settings = Settings()

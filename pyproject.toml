@@ -41,6 +41,6 @@ members = ["packages/utils", "packages/db", "apps/address_scraper", "apps/webhoo
 [tool.uv.sources]
 utils = { workspace = true }
 db = { workspace = true }
-address-scraper = { workspace = true }
 webhook = { workspace = true }
 streeteasy-scraper = { workspace = true }
+address-scraper = { workspace = true }

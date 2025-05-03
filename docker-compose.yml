@@ -1,7 +1,5 @@
-name: app
-
 services:
-  postgres:
+  db:
     image: postgres:17-alpine
     restart: always
     healthcheck:
@@ -12,10 +10,61 @@ services:
       timeout: 10s
     env_file:
       - ./.env
+    networks:
+      - my_network
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: ["tunnel", "run"]
+    env_file:
+      - ./.env
     environment:
-      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
-      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN?Variable not set}
+    networks:
+      - my_network
+
+  webhook:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+      cloudflared:
+        condition: service_started
+    command:
+      ["fastapi", "run", "--workers", "4", "apps/webhook/webhook/main.py"]
+    env_file:
+      - ./.env
+    networks:
+      - my_network
+
+  prestart:
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["bash", "scripts/prestart.sh"]
+    env_file:
+      - ./.env
+    networks:
+      - my_network
+
+  async_scraper:
+    build:
+      context: .
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+      webhook:
+        condition: service_started
+    command: ["bash", "scripts/run_async_scraper.sh"]
+    env_file:
+      - ./.env
     networks:
       - my_network
 

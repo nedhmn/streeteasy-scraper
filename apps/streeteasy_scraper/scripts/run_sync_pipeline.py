@@ -9,8 +9,9 @@ from db.models import Address
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from streeteasy_scraper.common.streeteasy_transformer import StreetEasyTransformer
+from streeteasy_scraper.common.utils import input_address_to_url
 from streeteasy_scraper.config import settings
-from streeteasy_scraper.sync.utils import get_http_client, input_address_to_url
+from streeteasy_scraper.synchronous.utils import get_http_client
 from tenacity import (
     RetryError,
     after_log,
@@ -24,7 +25,7 @@ from utils.logging import setup_logger
 
 # Setup logger
 setup_logger("run_sync_pipeline.log")
-logger = logging.getLogger("streeteasy_scraper.run_sync_pipeline")
+logger = logging.getLogger("run_sync_pipeline")
 
 
 def run_sync_pipeline() -> None:
