@@ -26,7 +26,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN?Variable not set}
     networks:
       - my_network
 

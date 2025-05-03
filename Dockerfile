@@ -20,8 +20,9 @@ ENV UV_COMPILE_BYTECODE=1
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
 ENV UV_LINK_MODE=copy
 
-# Install dependencies
+# Install dependencies with workspaces
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
+# Ref: https://github.com/astral-sh/uv/issues/8380#issuecomment-2427324310
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
