@@ -24,7 +24,7 @@ from utils.logging import setup_logger
 
 # Setup logger
 setup_logger("run_sync_pipeline.log")
-logger = logging.getLogger("streeteasy_scraper.run_sync_pipeline")
+logger = logging.getLogger("run_sync_pipeline")
 
 
 def run_sync_pipeline() -> None:
