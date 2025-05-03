@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     )
 
     # Async settings
+    AIOMETER_MAX_AT_ONCE: int = Field(default=30)
+    AIOMETER_MAX_PER_SECOND: int = Field(default=10)
+
     @property
     def BRIGHTDATA_SUBMIT_JOB_URL(self) -> str:
         return (
