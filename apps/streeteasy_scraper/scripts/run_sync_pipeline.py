@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from streeteasy_scraper.common.streeteasy_transformer import StreetEasyTransformer
 from streeteasy_scraper.config import settings
-from streeteasy_scraper.sync.utils import get_http_client, input_address_to_url
+from streeteasy_scraper.synchronous.utils import get_http_client, input_address_to_url
 from tenacity import (
     RetryError,
     after_log,
