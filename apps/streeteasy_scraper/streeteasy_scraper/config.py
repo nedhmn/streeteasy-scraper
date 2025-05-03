@@ -1,6 +1,7 @@
 import httpx
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Literal
 
 
 class Settings(BaseSettings):
@@ -32,6 +33,10 @@ class Settings(BaseSettings):
     BRIGHTDATA_ZONE: str = Field(description="BrightData Web Unlocker API zone")
 
     # Sync settings
+    CONSECUTIVE_ERROR_MAX: int = Field(
+        default=10,
+        description="The maximum number of consecutive errors until script exits",
+    )
     HTTP_TIMEOUT: int = Field(default=30, description="Http client timeout in seconds")
     THREADPOOL_MAX_WORKERS: int = Field(
         default=30, description="ThreadPoolExecutor max workers"
