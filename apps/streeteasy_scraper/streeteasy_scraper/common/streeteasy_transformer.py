@@ -1,6 +1,9 @@
+import re
+from dataclasses import dataclass
+
 import bs4
 from db.models import Address
-from dataclasses import dataclass
+
 from streeteasy_scraper.config import Settings
 
 
@@ -14,11 +17,11 @@ class StreetEasyTransformer:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def get_address_data(self, html: str, address: Address) -> Address:
+    def update_address(self, html: str, address: Address) -> Address:
         soup = bs4.BeautifulSoup(html, "html.parser")
 
         # Get unit data
-        unit_data = self.get_unit_data(soup)
+        unit_data = self._get_unit_data(soup)
 
         if not unit_data:
             address.status = "success"
@@ -26,11 +29,21 @@ class StreetEasyTransformer:
 
         # Get address data
         has_active_listing = self._has_active_listing(html)
+        is_address_match = self._is_address_match(
+            address.input_address, unit_data.address
+        )
+
+        # Update address
+        address.streeteasy_unit_name = unit_data.name
+        address.streeteasy_unit_address = unit_data.address
+        address.has_active_listing = has_active_listing
+        address.is_address_match = is_address_match
+        address.status = "success"
 
         return address
 
     @staticmethod
-    def get_unit_data(soup: bs4.BeautifulSoup) -> Unit | None:
+    def _get_unit_data(soup: bs4.BeautifulSoup) -> Unit | None:
         building_summary = soup.find(
             "section", attrs={"data-testid": "building-summary-component"}
         )
@@ -56,6 +69,15 @@ class StreetEasyTransformer:
             for pattern in self.settings.NO_RESULTS_PATTERNS
         )
 
+    def _is_address_match(self, input_address: str, unit_address: str | None) -> bool:
+        if not unit_address:
+            return False
+
+        addresses = [input_address, unit_address]
+        cleaned_addresses = [self._clean_address(address) for address in addresses]
+        return len(set(cleaned_addresses)) == 1
+
     @staticmethod
-    def _is_address_match() -> bool:
-        pass
+    def _clean_address(address: str) -> str:
+        pattern = re.compile(r"(?<=\d)(?:st|nd|rd|th)\b|\W+")
+        return " ".join(pattern.sub(" ", address.lower()).split())
