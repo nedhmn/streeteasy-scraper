@@ -11,7 +11,7 @@ from address_scraper.address_extractor import AddressExtractor
 from address_scraper.config import settings
 
 setup_logger("address_scraper.log")
-logger = logging.getLogger("address_scraper.main")
+logger = logging.getLogger("scripts.run_address_scraper")
 
 
 async def main() -> None:
