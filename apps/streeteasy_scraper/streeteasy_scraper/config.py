@@ -57,5 +57,14 @@ class Settings(BaseSettings):
         description="When scraping StreetEasy, if a page matches any of these patterns then there were no results found",
     )
 
+    # Async settings
+    @property
+    def BRIGHTDATA_SUBMIT_JOB_URL(self) -> str:
+        return (
+            "https://api.brightdata.com/unblocker/req?"
+            f"customer={settings.BRIGHTDATA_CUSTOMER_ID}&"
+            f"zone={settings.BRIGHTDATA_ZONE}"
+        )
+
 
 settings = Settings()
