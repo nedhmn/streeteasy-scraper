@@ -111,7 +111,7 @@ def process_address_wrapper(
 @retry(
     stop=stop_after_attempt(settings.TENACITY_STOP_AFTER_ATTEMPT),
     wait=wait_fixed(settings.TENACITY_WAIT_FIXED),
-    retry=retry_if_exception_type(httpx.HTTPStatusError),
+    retry=retry_if_exception_type(httpx.HTTPStatusError, httpx.ReadTimeout),
     before_sleep=before_sleep_log(logger, logging.WARNING),
     after=after_log(logger, logging.INFO),
 )
