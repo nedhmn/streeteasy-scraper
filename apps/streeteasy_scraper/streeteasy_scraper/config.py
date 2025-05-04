@@ -53,6 +53,7 @@ class Settings(BaseSettings):
             "we couldn't find any matches",
             "try searching in a different area",
             "there were no matches for",
+            "no units available. check back soon.",
         ],
         description="When scraping StreetEasy, if a page matches any of these patterns then there were no results found",
     )
