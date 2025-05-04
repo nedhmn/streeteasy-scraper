@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from db.models import Address
@@ -6,6 +7,8 @@ from sqlalchemy import select
 
 from webhook.api.deps import DbSessionDep
 from webhook.core.models import HealthCheckResponse, WebhookPayload
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -26,6 +29,8 @@ async def get_health_check() -> Any:
     tags=["bright-data"],
 )
 async def brightdata_webhook(db_session: DbSessionDep, payload: WebhookPayload) -> None:
+    logger.debug("Paylod received: %s", payload)
+
     job_status_code = payload.status
     job_response_id = payload.response_id
 
