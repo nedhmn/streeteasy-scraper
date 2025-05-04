@@ -12,3 +12,4 @@ wheels/
 .mypy_cache
 .ruff_cache
 *.log
+notebooks

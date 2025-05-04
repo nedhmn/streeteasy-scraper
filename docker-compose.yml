@@ -14,8 +14,9 @@ services:
       - my_network
 
   cloudflared:
+    profiles:
+      - async
     image: cloudflare/cloudflared:latest
-    restart: unless-stopped
     command: ["tunnel", "run"]
     env_file:
       - ./.env
@@ -25,6 +26,8 @@ services:
       - my_network
 
   webhook:
+    profiles:
+      - async
     build:
       context: .
     depends_on:
@@ -52,9 +55,10 @@ services:
       - my_network
 
   async_scraper:
+    profiles:
+      - async
     build:
       context: .
-    restart: on-failure
     depends_on:
       db:
         condition: service_healthy
@@ -63,6 +67,22 @@ services:
       webhook:
         condition: service_started
     command: ["bash", "scripts/run_async_scraper.sh"]
+    env_file:
+      - ./.env
+    networks:
+      - my_network
+
+  sync_scraper:
+    profiles:
+      - sync
+    build:
+      context: .
+    depends_on:
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+    command: ["bash", "scripts/run_sync_scraper.sh"]
     env_file:
       - ./.env
     networks:
