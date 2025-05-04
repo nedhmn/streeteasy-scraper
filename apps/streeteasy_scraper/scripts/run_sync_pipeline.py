@@ -25,7 +25,7 @@ from utils.logging import setup_logger
 
 # Setup logger
 setup_logger("run_sync_pipeline.log")
-logger = logging.getLogger("run_sync_pipeline")
+logger = logging.getLogger("scripts.run_sync_pipeline")
 
 
 def run_sync_pipeline() -> None:
@@ -34,9 +34,9 @@ def run_sync_pipeline() -> None:
 
     with get_http_client(settings) as http_client:
         with get_db_session() as session:
-            pending_addresses_id = get_pending_addresses_id(session)
+            pending_address_ids = get_pending_address_ids(session)
 
-        if not pending_addresses_id:
+        if not pending_address_ids:
             logger.info("No pending addresses found. Exiting.")
             return
 
@@ -45,13 +45,13 @@ def run_sync_pipeline() -> None:
         with ThreadPoolExecutor(
             max_workers=settings.THREADPOOL_MAX_WORKERS
         ) as executor:
-            logger.info("Processing %d pending addresses", len(pending_addresses_id))
+            logger.info("Processing %d pending addresses", len(pending_address_ids))
 
             futures = [
                 executor.submit(
                     process_address_wrapper, address_id, transformer, http_client
                 )
-                for address_id in pending_addresses_id
+                for address_id in pending_address_ids
             ]
 
             for future in as_completed(futures):
@@ -76,7 +76,7 @@ def run_sync_pipeline() -> None:
                     consecutive_error_count = 0
 
 
-def get_pending_addresses_id(db_session: Session) -> Sequence[UUID]:
+def get_pending_address_ids(db_session: Session) -> Sequence[UUID]:
     logger.info("Fetching pending addresses from database")
     result = db_session.execute(select(Address.id).where(Address.status == "pending"))
     addresses = result.scalars().all()
