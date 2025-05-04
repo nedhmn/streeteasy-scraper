@@ -37,8 +37,8 @@
 
 - [x] `async_api` module
 - [x] `job_submitter` class to send jobs to async serp api and initialize jobs in database
-- [ ] `job_results_extractor` class to extract job results when ready
-- [ ] Use the transformer from sync api to transform results
+- [x] `job_results_extractor` class to extract job results when ready
+- [x] Use the transformer from sync api to transform results
 - [ ] Load transformed data to database
 
 ### `notebooks/result_analysis`
