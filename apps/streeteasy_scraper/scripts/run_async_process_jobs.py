@@ -29,7 +29,7 @@ async def main() -> None:
         while True:
             async with get_async_db_session() as db_session:
                 # Checks if there are available jobs to continue script
-                if not has_available_jobs(db_session):
+                if not await has_available_jobs(db_session):
                     logger.info("No more available jobs! Exiting...")
                     return
 
