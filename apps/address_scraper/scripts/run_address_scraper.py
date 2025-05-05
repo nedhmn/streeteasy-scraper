@@ -26,7 +26,13 @@ async def main() -> None:
         logger.info("Extracting addresses from source.")
         extractor = AddressExtractor(settings, http_client, db_session)
         input_addresses = await extractor.run()
-        logger.info("Extracted %s addresses.", len(input_addresses))
+        logger.info(
+            "Extracted %s addresses. Subsetting the first 500 addresses to seed the database.",
+            len(input_addresses),
+        )
+
+        # Limit results for demonstration
+        input_addresses = input_addresses[:500]
 
         # Load addresses to database
         logger.info("Loading addresses to database.")

@@ -1,0 +1,89 @@
+---
+title: Configuration
+description: Configure the essential settings for the synchronous scraping profile.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Configuration is managed through environment variables loaded from a `.env` file in the project's root directory.
+
+## Creating the `.env` File
+
+In the root directory of the `streeteasy-scraper-monorepo` project, create a new file named `.env`. You can copy the contents of the `.env.example` file as a starting point:
+
+```bash
+cp .env.example .env
+```
+
+Now, you will edit the `.env` file to fill in the required values.
+
+## Required Environment Variables for Sync Profile
+
+Configure these variables in your `.env` file:
+
+### Database Configuration
+
+Connection details for the local PostgreSQL database:
+
+```dotenv
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=user
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+```
+
+### BrightData Web Unlocker Credentials
+
+Credentials for the synchronous BrightData Web Unlocker service.
+
+- `BRIGHTDATA_USERNAME`: Your BrightData Web Unlocker username.
+- `BRIGHTDATA_PASSWORD`: Your BrightData Web Unlocker password.
+- `BRIGHTDATA_HOST`: BrightData proxy hostname (e.g., brd.superproxy.io).
+
+```dotenv
+BRIGHTDATA_USERNAME=your_brightdata_username
+BRIGHTDATA_PASSWORD=your_brightdata_password
+BRIGHTDATA_HOST=brd.superproxy.io
+```
+
+### Async/Shared Variables (Required by Config)
+
+These variables are required by the project's configuration loading but are primarily used for the asynchronous profile. Provide values from your BrightData account or use a placeholder for Cloudflare.
+
+- `BRIGHTDATA_API_TOKEN`: Your BrightData API Token.
+- `BRIGHTDATA_CUSTOMER_ID`: Your BrightData Customer ID.
+- `BRIGHTDATA_ZONE`: Your BrightData Web Unlocker zone name.
+- `CLOUDFLARE_TUNNEL_TOKEN`: Your Cloudflare Tunnel Token. Use `dummy_token` for sync quickstart.
+
+```dotenv
+BRIGHTDATA_API_TOKEN=your_brightdata_api_token
+BRIGHTDATA_CUSTOMER_ID=your_brightdata_customer_id
+BRIGHTDATA_ZONE=your_brightdata_zone
+CLOUDFLARE_TUNNEL_TOKEN=dummy_token # Placeholder for sync quickstart
+```
+
+<Aside type="note">
+  Find BrightData API Token, Customer ID, and Zone name in your BrightData
+  account dashboard.
+</Aside>
+
+## `BOROUGHS_TO_KEEP` (Optional)
+
+Filter addresses from the nyc.gov list. Default is `MANHATTAN`.
+
+- `BOROUGHS_TO_KEEP`: Comma-separated borough names (e.g., `MANHATTAN,BROOKLYN`).
+
+```dotenv
+BOROUGHS_TO_KEEP=MANHATTAN
+```
+
+<Aside type="note">
+  Any configurations to `address_scraper` doesn't matter too much because
+  there's a limit of 500 addresses to save to the database. If you want to
+  remove this limit, it's at
+  [apps/address_scraper/scripts/run_address_scraper.py](https://github.com/nedhmn/streeteasy-scraper-monorepo/blob/main/apps/address_scraper/scripts/run_address_scraper.py)
+  line 35.
+</Aside>
+
+Once you have filled in the required environment variables in your `.env` file, you are ready to run the synchronous scraping profile using Docker Compose.

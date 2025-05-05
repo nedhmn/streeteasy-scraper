@@ -8,25 +8,27 @@ export default defineConfig({
   base: "/streeteasy-scraper-monorepo/",
   integrations: [
     starlight({
-      title: "My Docs",
+      title: "StreetEasy Scraper",
+      favicon: "/favicon.svg",
       social: [
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/withastro/starlight",
+          href: "https://github.com/nedhmn/streeteasy-scraper-monorepo",
         },
       ],
       sidebar: [
         {
-          label: "Guides",
+          label: "Getting Started",
           items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", slug: "guides/example" },
+            { label: "Introduction", slug: "getting-started/introduction" },
+            { label: "Installation", slug: "getting-started/installation" },
+            { label: "Configuration", slug: "getting-started/configuration" },
+            {
+              label: "Running the Sync Profile",
+              slug: "getting-started/running-the-sync-profile",
+            },
           ],
-        },
-        {
-          label: "Reference",
-          autogenerate: { directory: "reference" },
         },
       ],
     }),
