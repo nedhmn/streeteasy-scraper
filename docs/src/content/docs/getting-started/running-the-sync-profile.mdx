@@ -3,15 +3,13 @@ title: Running the Sync Profile
 description: Learn how to start the streeteasy-scraper using the synchronous Docker Compose profile.
 ---
 
-Now that you have installed the prerequisites and configured your `.env` file with the necessary database and BrightData credentials, you are ready to run the synchronous scraping profile using Docker Compose.
+With prerequisites met and the `.env` file configured, start the synchronous scraping profile using Docker Compose.
 
 The synchronous profile will start the PostgreSQL database and the StreetEasy scraper application, configured to use BrightData's Web Unlocker in a synchronous, multi-threaded manner.
 
 ## Starting the Services
 
-Navigate to the root directory of the `streeteasy-scraper-monorepo` project in your terminal.
-
-To build the Docker images and start the services defined in the synchronous profile, run the following command:
+In the project root directory, run:
 
 ```bash
 docker compose --profile sync up --build

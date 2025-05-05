@@ -5,9 +5,7 @@ description: Configure the essential settings for the synchronous scraping profi
 
 import { Aside } from "@astrojs/starlight/components";
 
-To run the synchronous scraping profile, you need to provide the necessary connection details for the database and your BrightData Web Unlocker credentials.
-
-All configuration is managed through environment variables, which are loaded from a `.env` file in the root directory of the project.
+Configuration is managed through environment variables loaded from a `.env` file in the project's root directory.
 
 ## Creating the `.env` File
 
@@ -19,13 +17,13 @@ cp .env.example .env
 
 Now, you will edit the `.env` file to fill in the required values.
 
-## Essential Environment Variables for Sync Profile
+## Required Environment Variables for Sync Profile
 
-For the synchronous scraping profile, you need to configure the following environment variables in your `.env` file:
+Configure these variables in your `.env` file:
 
 ### Database Configuration
 
-These variables are used to connect to the PostgreSQL database, which stores the addresses to scrape and the scraped data. The Docker Compose configuration already sets up an instance for you locally so you can use the following values:
+Connection details for the local PostgreSQL database:
 
 ```dotenv
 POSTGRES_USER=user
@@ -37,11 +35,11 @@ POSTGRES_PORT=5432
 
 ### BrightData Web Unlocker Credentials
 
-These variables are used by the synchronous scraper to authenticate with BrightData's Web Unlocker service and route requests through their network.
+Credentials for the synchronous BrightData Web Unlocker service.
 
 - `BRIGHTDATA_USERNAME`: Your BrightData Web Unlocker username.
 - `BRIGHTDATA_PASSWORD`: Your BrightData Web Unlocker password.
-- `BRIGHTDATA_HOST`: The hostname provided by BrightData for the Web Unlocker proxy (e.g., brd.superproxy.io).
+- `BRIGHTDATA_HOST`: BrightData proxy hostname (e.g., brd.superproxy.io).
 
 ```dotenv
 BRIGHTDATA_USERNAME=your_brightdata_username
@@ -49,17 +47,32 @@ BRIGHTDATA_PASSWORD=your_brightdata_password
 BRIGHTDATA_HOST=brd.superproxy.io
 ```
 
+### Async/Shared Variables (Required by Config)
+
+These variables are required by the project's configuration loading but are primarily used for the asynchronous profile. Provide values from your BrightData account or use a placeholder for Cloudflare.
+
+- `BRIGHTDATA_API_TOKEN`: Your BrightData API Token.
+- `BRIGHTDATA_CUSTOMER_ID`: Your BrightData Customer ID.
+- `BRIGHTDATA_ZONE`: Your BrightData Web Unlocker zone name.
+- `CLOUDFLARE_TUNNEL_TOKEN`: Your Cloudflare Tunnel Token. Use `dummy_token` for sync quickstart.
+
+```dotenv
+BRIGHTDATA_API_TOKEN=your_brightdata_api_token
+BRIGHTDATA_CUSTOMER_ID=your_brightdata_customer_id
+BRIGHTDATA_ZONE=your_brightdata_zone
+CLOUDFLARE_TUNNEL_TOKEN=dummy_token # Placeholder for sync quickstart
+```
+
 <Aside type="note">
-  The `BRIGHTDATA_API_TOKEN`, `BRIGHTDATA_CUSTOMER_ID`, `BRIGHTDATA_ZONE`, and
-  `CLOUDFLARE_TUNNEL_TOKEN` variables in the `.env.example` file are not
-  required for the synchronous scraping profile and can be left empty for now.
+  Find BrightData API Token, Customer ID, and Zone name in your BrightData
+  account dashboard.
 </Aside>
 
 ## `BOROUGHS_TO_KEEP` (Optional)
 
-The `address_scraper` application uses the `BOROUGHS_TO_KEEP` environment variable to filter which addresses are saved to the database from the nyc.gov list.
+Filter addresses from the nyc.gov list. Default is `MANHATTAN`.
 
-- `BOROUGHS_TO_KEEP`: A comma-separated string of borough names you want to include. For example, to include only Manhattan and Brooklyn, you would set `BOROUGHS_TO_KEEP=MANHATTAN,BROOKLYN`. The default is `MANHATTAN`.
+- `BOROUGHS_TO_KEEP`: Comma-separated borough names (e.g., `MANHATTAN,BROOKLYN`).
 
 ```dotenv
 BOROUGHS_TO_KEEP=MANHATTAN
