@@ -30,6 +30,23 @@ export default defineConfig({
             },
           ],
         },
+        {
+          label: "Guides",
+          items: [
+            {
+              label: "Setting Up The Async Profile",
+              slug: "guides/setting-up-the-async-profile",
+            },
+            {
+              label: "Running The Async Profile",
+              slug: "guides/running-the-async-profile",
+            },
+            {
+              label: "Providing Addresses for Scraping",
+              slug: "guides/providing-addresses-for-scraping",
+            },
+          ],
+        },
       ],
     }),
   ],
