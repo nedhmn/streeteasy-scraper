@@ -28,6 +28,9 @@ async def main() -> None:
         input_addresses = await extractor.run()
         logger.info("Extracted %s addresses.", len(input_addresses))
 
+        # Limit results for demonstration
+        input_addresses = input_addresses[:500]
+
         # Load addresses to database
         logger.info("Loading addresses to database.")
         await load_addresses_to_db(input_addresses, db_session)
