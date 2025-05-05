@@ -1,0 +1,49 @@
+---
+title: Running the Sync Profile
+description: Learn how to start the streeteasy-scraper using the synchronous Docker Compose profile.
+---
+
+Now that you have installed the prerequisites and configured your `.env` file with the necessary database and BrightData credentials, you are ready to run the synchronous scraping profile using Docker Compose.
+
+The synchronous profile will start the PostgreSQL database and the StreetEasy scraper application, configured to use BrightData's Web Unlocker in a synchronous, multi-threaded manner.
+
+## Starting the Services
+
+Navigate to the root directory of the `streeteasy-scraper-monorepo` project in your terminal.
+
+To build the Docker images and start the services defined in the synchronous profile, run the following command:
+
+```bash
+docker compose --profile sync up --build
+```
+
+- `docker compose`: The command to interact with Docker Compose.
+- `--profile sync`: This flag tells Docker Compose to only include the services defined under the `sync` profile in your `docker-compose.yml`. This will include the `db`, `prestart`, and `sync_scraper` services.
+- `up`: This command builds, creates, starts, and attaches to containers for a service.
+- `--build`: This flag ensures that the Docker images are built before starting the containers.
+
+## What to Expect
+
+When you run the command, Docker Compose will:
+
+1. Build the necessary Docker images for the services in the `sync` profile (`db`, `prestart`, and `sync_scraper`).
+2. Create and start the `db` (PostgreSQL) container.
+3. Wait for the `db` service to pass its health check, ensuring the database is ready.
+4. Run the `prestart` service. This service initializes the database tables using SQLAlchemy and runs the `address_scraper` script to seed the database with initial addresses.
+5. Wait for the `prestart` service to complete successfully.
+6. Start the `sync_scraper` container.
+7. Attach to the logs of the running containers, so you will see the output directly in your terminal.
+
+You should see output indicating the startup of the `db`, the execution and completion of `prestart`, and finally the logs from `sync_scraper`. The `sync_scraper` will then connect to the database and begin processing the addresses.
+The `docker-compose.override.yml` ensures that the database port `5432` on your host machine is mapped to the database container's port for you to access locally.
+
+## Next Steps
+
+Congratulations! You have successfully completed the "Getting Started" quickstart by running the synchronous scraping profile.
+
+To further explore the capabilities of the `streeteasy-scraper-monorepo` and learn about the more scalable **asynchronous scraping workflow**, consult the following sections of the documentation:
+
+- **System Design and Architecture:** Understand how the different components of the project work together.
+- **Guides:** Learn how to set up and run the asynchronous profile, provide different addresses for scraping, and access/report on the scraped data.
+
+These sections will provide you with the knowledge to leverage the full power of the project.

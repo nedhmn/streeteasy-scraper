@@ -10,7 +10,9 @@ At its core, this project aims to provide a flexible and efficient way to collec
 ## Key Features
 
 - **Address Seeding:** Initialize your database with a list of target addresses from external sources.
-- **Flexible Scraping Methods:** Choose between a synchronous, multi-threaded approach and an asynchronous, webhook-driven workflow for interacting with [BrightData's WebUnlocker](https://brightdata.com/products/web-unlocker).
+- **Flexible Scraping Methods:** This project offers two distinct methods for scraping:
+  - **Synchronous:** A simpler, multi-threaded approach for direct requests.
+  - **Asynchronous:** A more robust and scalable workflow leveraging BrightData's callbacks for high-volume or longer-running jobs.
 - **Webhook Integration:** A dedicated service to handle callbacks from BrightData for efficient asynchronous job processing.
 - **Dockerized Deployment:** Easily deploy and manage all project components using Docker and Docker Compose.
 - **Cloudflared Tunneling:** Securely expose the webhook to the public internet for asynchronous workflows.
@@ -18,7 +20,7 @@ At its core, this project aims to provide a flexible and efficient way to collec
 
 ## Why Use This Project?
 
-Whether you're a data analyst, researcher, or developer, this project provides a foundation for building datasets of StreetEasy information. Its modular design and use of established technologies make it adaptable for various data collection needs. The inclusion of both synchronous and asynchronous scraping methods allows you to choose the approach that best suits your scale and requirements.
+Whether you're a data analyst, researcher, or developer, this project provides a foundation for building datasets of StreetEasy information. Its modular design and use of established technologies make it adaptable for various data collection needs. The inclusion of **both synchronous and asynchronous scraping methods** allows you to choose the approach that best suits your scale and requirements – the synchronous method for simplicity and quick starts, and the asynchronous method for its scalability and reliability with BrightData.
 
 ## Technologies Used
 
@@ -33,6 +35,4 @@ The `streeteasy-scraper-monorepo` is built using a modern Python stack and lever
 - **Cloudflared:** To expose the webhook publicly via secure tunnels.
 - **BrightData WebUnlocker:** A third-party service used for web scraping.
 
-This introduction has provided a brief overview of the project. The following sections will guide you through setting up the synchronous scraping profile, understanding the system's design, and then diving into the details of the asynchronous setup and data usage.
-
-Let's get started with the installation!
+This introduction has provided a brief overview of the project and its two primary scraping methods. The following sections will guide you through setting up the synchronous scraping profile, understanding the system's design, and then diving into the details of the asynchronous setup and data usage.
