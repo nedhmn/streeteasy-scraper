@@ -11,7 +11,6 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    ENVIRONMENT: Literal["local", "production"] = Field(default="local")
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
@@ -20,12 +19,9 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL_BODY(self) -> str:
-        # Set host to localhost if enviornment is local
-        host = "localhost" if self.ENVIRONMENT == "local" else self.POSTGRES_HOST
-
         return (
             f"{self.POSTGRES_USER}:"
-            f"{self.POSTGRES_PASSWORD}@{host}:"
+            f"{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:"
             f"{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
