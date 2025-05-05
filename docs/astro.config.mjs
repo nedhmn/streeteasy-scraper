@@ -22,7 +22,6 @@ export default defineConfig({
           label: "Getting Started",
           items: [
             { label: "Introduction", slug: "getting-started/introduction" },
-            { label: "Prerequisites", slug: "getting-started/prerequisites" },
             { label: "Installation", slug: "getting-started/installation" },
             { label: "Configuration", slug: "getting-started/configuration" },
             {
