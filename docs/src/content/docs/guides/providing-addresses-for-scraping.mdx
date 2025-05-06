@@ -39,9 +39,9 @@ class Base(DeclarativeBase):
 
 class Address(Base):
     __tablename__ = "addresses"
-    input_address = Mapped[str] = mapped_column(nullable=False)
+    input_address: Mapped[str] = mapped_column(nullable=False)
 
-def add_addresses_to_db(address_list: list[str]):
+def add_addresses_to_db(address_list: list[str]) -> None:
     # This will be the database url if using the docker compose postgres example
     engine = create_engine("postgresql://user:password@localhost:5432/user")
     SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
