@@ -1,0 +1,171 @@
+---
+title: Setting up the Asyn Profile
+description: Configure the necessary components for the streeteasy-scraper's asynchronous workflow.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Set up the project's asynchronous scraping workflow for greater scalability and reliability with BrightData.
+
+This guide covers environment variables, BrightData zone configuration, and Cloudflared webhook setup.
+
+## Introduction
+
+This guide details the asynchronous profile setup. This workflow uses a webhook and secure tunneling, offering a more robust capability than the synchronous quickstart.
+
+Let's start with environment variables for this workflow.
+
+## Configuration
+
+Beyond the database and basic BrightData proxy credentials used in the synchronous profile, the asynchronous workflow requires additional configuration, primarily related to the BrightData API and the Cloudflared tunnel.
+
+You will need to fill in the following variables in your `.env` file. Some of these might have been left with placeholder values during the synchronous quickstart.
+
+### BrightData API and Zone Details
+
+These variables are used by the asynchronous scraper and the webhook to interact with the BrightData API for sending requests and processing results.
+
+```dotenv
+BRIGHTDATA_API_TOKEN=your_brightdata_api_token
+BRIGHTDATA_CUSTOMER_ID=your_brightdata_customer_id
+BRIGHTDATA_ZONE=your_brightdata_zone
+```
+
+### Cloudflare Tunnel Token
+
+This token is essential for the `cloudflared` service to establish a secure tunnel, allowing BrightData to send webhook callbacks to your local webhook service.
+
+- `CLOUDFLARE_TUNNEL_TOKEN`: Your Cloudflare Tunnel Token. You will generate this in your Cloudflare dashboard.
+
+```dotenv
+CLOUDFLARE_TUNNEL_TOKEN=your_cloudflare_tunnel_token
+```
+
+You'll learn how to generate this token in the next section on Cloudflared
+Tunnel Setup.
+
+## Cloudflared Tunnel Setup
+
+To enable BrightData to send callbacks to your local webhook service for asynchronous job completion, you need to expose your webhook publicly. We'll use [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) for this, which provides a secure, outbound-only connection to Cloudflare's network.
+
+This process involves registering a domain with Cloudflare, creating a tunnel, and configuring a public hostname to point to your webhook service running in Docker.
+
+### 1. Register a Domain with Cloudflare
+
+If you don't already have a domain managed by Cloudflare, you'll need to register one. This is a cost-effective way to utilize Cloudflare's features, including essential security measures like IP whitelisting.
+
+Go to the Cloudflare website and follow their process to register a domain and have it managed by Cloudflare.
+
+### 2. Create a Cloudflare Tunnel
+
+Once your domain is active in Cloudflare, navigate to your Cloudflare dashboard.
+
+1.  In the sidebar click on **Zero Trust**. This will open the Zero Trust dashboard.
+2.  In the sidebar, expand the **Networks** dropdown and click on **Tunnels**.
+3.  Click the **Create a tunnel** button.
+
+You will be guided through a four-step tunnel creation process.
+
+#### Step 1: Select Tunnel Type & Name Your Tunnel
+
+Choose the "Cloudflared" method as the connection type. This establishes a secure, outbound-only connection to Cloudflare.
+
+Give your tunnel a descriptive name (e.g., `streeteasy-webhook-tunnel`). Click **Save tunnel** to proceed.
+
+#### Step 2: Install and Run Connector
+
+This section provides instructions to install and run the `cloudflared` connector. Since we're using Docker, select the **Docker** environment.
+
+You will see a `docker run` command provided. **Copy this command.** It contains your unique `CLOUDFLARE_TUNNEL_TOKEN`.
+
+Go back to your `.env` file and update the `CLOUDFLARE_TUNNEL_TOKEN` variable with the token you copied from the `docker run` command.
+
+#### Step 3: Route Tunnel
+
+This step configures the public hostname that will point to your local webhook service. This is how your webhook will be accessible over the internet.
+
+1.  Set **Subdomain** to `api`.
+2.  For **Domain**, select the domain you registered earlier from the dropdown.
+3.  For **Service**:
+    - Set **Type** to `HTTP`.
+    - Set **URL** to `webhook:8000`. The name `webhook` corresponds to the service name in our `docker-compose.yml`, and `8000` is the default port for the FastAPI webhook application. Docker Compose's internal networking allows `cloudflared` to reach the `webhook` service by its name.
+
+Click **Save tunnel** to complete the tunnel configuration.
+
+You will see a page listing your tunnels. Your newly created tunnel's status will show as inactive until you run your Docker Compose file with the `cloudflared` service.
+
+### 3. Secure Your Webhook with IP Whitelisting
+
+To restrict access to your webhook and enhance security, we will set up an IP whitelist in Cloudflare's Web Application Firewall (WAF). This ensures that only requests from authorized IP addresses can reach your webhook.
+
+1.  Go back to your Cloudflare dashboard's account home and click on the domain you are using.
+2.  In the sidebar, expand the **Security** dropdown and click on **WAF**.
+3.  Go to **Custom rules** and click the **Create rule** button.
+4.  Give the rule a name, e.g., `IP Whitelist`.
+5.  Configure the rule's expression:
+    - For **Field**, select `IP Source Address`.
+    - For **Operator**, select `is not in`.
+    - For **Value**, enter the allowed IP addresses. You'll need to include:
+      - BrightData's webhook IP addresses: `100.27.150.189`, `18.214.10.85`. (You can verify these in the BrightData documentation for asynchronous requests [here](https://docs.brightdata.com/scraping-automation/serp-api/asynchronous-requests#getting-started)).
+      - Your own IPv4 and IPv6 addresses (you can find these using a service like [whatismyip.com](whatismyip.com)).
+6.  For **Choose action**, select `Block`.
+7.  For **Select order**, choose `First` to ensure this rule has the highest priority.
+
+Click **Save** to activate the WAF rule. Now, anyone attempting to access your webhook from an IP address not in your whitelist will be blocked by Cloudflare.
+
+### 4. Enable Strict SSL/TLS Encryption
+
+To ensure secure, encrypted communication, configure SSL/TLS encryption for your domain.
+
+1.  In the Cloudflare dashboard sidebar for your domain, expand the **SSL/TLS** dropdown and click **Overview**.
+2.  Under Encryption mode, select **Full (Strict)**. This mode encrypts communication end-to-end and enforces validation on origin certificates, providing the highest level of security for your connection.
+
+You have now completed the essential Cloudflare setup for your asynchronous webhook! You've registered a domain, configured a secure tunnel, obtained the tunnel token for your `.env`, set up IP whitelisting for security, and enabled strict SSL/TLS encryption. The next step is to run the asynchronous profile using Docker Compose, which will bring up the `cloudflared` service and establish the tunnel.
+
+## Configuring BrightData Webhook Target
+
+Once your Cloudflare Tunnel is set up and configured with a public hostname, you need to inform BrightData where to send the completion callbacks for your asynchronous scraping jobs. This is done by setting the Web Hook URL in your Web Unlocker zone settings.
+
+### Steps to Configure the Webhook URL
+
+1.  Log in to BrightData and go to the User Dashboard.
+2.  In the sidebar, click on **Proxies & Scraping**. You should see your Web Unlocker API service listed under the **My Zones** tab.
+3.  Click on your Web Unlocker API service. This will take you to the overview page for that service.
+4.  Click on the **Configuration** tab.
+5.  Find and open the **Advanced settings** accordion.
+6.  Enable the **Asynchronous requests** toggle switch if you haven't already.
+7.  In the **Web Hook URL** input field, enter the public hostname you configured with your Cloudflare Tunnel, followed by the specific webhook route in your application. The format should be:
+
+    ```
+    https://api.<your-domain>.com/api/v1/brightdata-webhook
+    ```
+
+    Replace `<your-domain>.com` with your actual domain name.
+
+8.  Ensure that the **Web Hook Request Method** is set to **POST**. This is the method your webhook service is designed to receive callbacks on.
+
+### Enhancing Security in BrightData (Recommended)
+
+For an additional layer of security within your BrightData Web Unlocker service itself, you can restrict which IP addresses are allowed to use the service.
+
+1.  On the same Configuration tab page in your BrightData Web Unlocker settings, find and open the **Security settings** accordion.
+2.  In the **Allowed IPs** input field, enter your personal IPv4 address. This will help ensure that only requests originating from your IP address can utilize this specific Web Unlocker zone.
+
+<Aside type="note">
+  While IP whitelisting in Cloudflare protects your webhook endpoint, IP
+  whitelisting in BrightData protects your Web Unlocker service usage from
+  unauthorized access if your BrightData credentials were ever compromised.
+</Aside>
+
+## Summary
+
+In this guide, you've completed the necessary configuration to enable the asynchronous scraping workflow:
+
+- You updated your `.env` file with the BrightData API and zone details, as well as the Cloudflare Tunnel token.
+- You configured a secure Cloudflare Tunnel and a public hostname to expose your webhook.
+- You set the Web Hook URL in your BrightData Web Unlocker zone to point to your Cloudflare Tunnel hostname and webhook route.
+- You enhanced security by enabling IP whitelisting in both Cloudflare and potentially within your BrightData zone.
+
+With these configurations in place, your environment is ready to handle the asynchronous scraping process.
+
+The next guide, **Running the Asynchronous Profile**, will walk you through starting the Docker Compose services for the asynchronous workflow and monitoring its execution.

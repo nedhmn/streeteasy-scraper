@@ -1,0 +1,91 @@
+---
+title: Running the Asynchronous Profile
+description: Start and monitor the streeteasy-scraper with the asynchronous Docker Compose profile.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+With the asynchronous profile successfully configured, you can now start the services required for this workflow using Docker Compose.
+
+## Introduction
+
+This guide details how to run the `streeteasy-scraper-monorepo` using its asynchronous Docker Compose profile. This profile activates all components necessary for the asynchronous scraping process, including the webhook and Cloudflare tunnel.
+
+## Starting the Services
+
+Navigate to the root directory of the `streeteasy-scraper-monorepo` project in your terminal.
+
+To build the Docker images and start the services defined in the asynchronous profile, run:
+
+```bash
+docker compose --profile async up --build
+```
+
+## What Services Start
+
+Running the asynchronous profile starts the following services:
+
+- `db`: The PostgreSQL database container.
+- `prestart`: Initializes database tables and seeds initial addresses if it hasn't already.
+- `cloudflared`: Establishes the secure tunnel to Cloudflare. You should see output from this container indicating the tunnel is active and showing your public hostname.
+- `webhook`: The FastAPI application waiting to receive callbacks from BrightData.
+- `async_scraper`: The main scraper application that sends requests to BrightData and manages the asynchronous job lifecycle in the database.
+
+## The Asynchronous Workflow in Action
+
+When you run the asynchronous profile, the `run_the_async_scraper.sh` script orchestrates two distinct Python scripts to manage the asynchronous scraping workflow:
+
+1.  **`run_async_submit_jobs.py`:** This script is responsible for sending scraping requests to BrightData.
+
+    - It connects to the database and retrieves addresses with a "pending" status.
+    - For each pending address, it constructs the StreetEasy URL to scrape.
+    - It sends an asynchronous request to BrightData's Web Unlocker API to scrape the URL.
+    - Upon receiving a `response_id` from BrightData, it updates the address record in the database, setting the `brightdata_response_id` and changing the status to "sent_to_process".
+    - This script runs to completion after submitting all currently pending jobs.
+
+2.  **`run_async_process_jobs.py`:** This script runs in a continuous loop, acting as the background processor for completed BrightData jobs.
+    - It periodically checks the database for addresses with a "ready_to_process" status. This status is set by the `webhook` service when it receives a success callback from BrightData.
+    - If it finds "ready_to_process" jobs, it fetches the scraped HTML data from BrightData's API using the stored `brightdata_response_id`.
+    - It then processes and transforms the scraped HTML data.
+    - Finally, it updates the address record in the database with the extracted data and sets the status to "success".
+    - If a job failed or had no data, it updates the status to "failed".
+    - If there are no "ready_to_process" jobs, the script pauses for a configured interval before checking again. This script continues running until it detects no more jobs in either "sent_to_process" or "ready_to_process" states, at which point it exits.
+
+The workflow sequence is therefore:
+
+- The `prestart` service seeds initial addresses with "pending" status.
+- `run_async_submit_jobs.py` runs once, finds "pending" addresses, submits jobs to BrightData, and sets their status to "sent_to_process".
+- BrightData processes the requests and sends callbacks to your `webhook`.
+- The `webhook` receives callbacks and updates job statuses to "ready_to_process" or "failed" in the database.
+- `run_async_process_jobs.py` runs in a loop, finds "ready_to_process" jobs, fetches results from BrightData, processes the data, and sets the status to "success" or "failed".
+
+<Aside type="tip">
+  You can monitor the asynchronous workflow's progress by checking the logs of
+  the `async_scraper`, `webhook`, and `cloudflared` containers (via Docker
+  Desktop or `docker logs`), and by querying the database's `addresses` table to
+  see the status of individual jobs (pending, sent\_to\_process,
+  ready\_to\_process, success, failed).
+</Aside>
+
+The asynchronous profile is now actively working to scrape data based on the addresses in your database, leveraging the configured BrightData and Cloudflare services.
+
+## Common Issues
+
+Here are a few common issues you might encounter when running the asynchronous profile and how to troubleshoot them:
+
+### Verifying Cloudflare Tunnel and Webhook Connection
+
+After running the Docker Compose command for the async profile, verify that your Cloudflare Tunnel is successfully exposing your webhook:
+
+- Open your web browser and go to your public hostname followed by the FastAPI docs endpoint: `https://api.<your-domain>.com/docs`. Replace `<your-domain>.com` with your actual domain.
+- If you see the FastAPI Swagger UI documentation for your webhook routes, your tunnel is working and connecting to the webhook service.
+- **If you are blocked by Cloudflare:** Check your Cloudflare WAF custom rules (Security -> WAF -> Custom rules) to ensure your current IP address is correctly included in the IP whitelist rule.
+- **If Cloudflare cannot connect to the application but the webhook container is running:** This indicates a misconfiguration in how your Cloudflare Tunnel is routed to your Docker service. Go back to your Cloudflare Zero Trust dashboard (Networks -> Tunnels), select your tunnel, and verify the Public Hostname configuration. Ensure the service type is `HTTP` and the URL exactly matches your Docker service name and port (e.g., `webhook:8000`). Confirm the `webhook` container is running using `docker ps -a`.
+
+### Process Jobs Script Not Finding "Ready to Process" Jobs
+
+If the `run_async_submit_jobs.py` script has finished (you can see its completion in the `async_scraper` logs), but the `run_async_process_jobs.py` script logs indicate it's not finding any jobs with a "ready_to_process" status:
+
+- **Check Cloudflare IP Whitelist:** Ensure that BrightData's webhook IP addresses (`100.27.150.189`, `18.214.10.85`) are correctly included in your Cloudflare WAF IP whitelist rule.
+- **Check BrightData Webhook URL:** Double-check the Web Hook URL configured in your BrightData Web Unlocker zone settings. Ensure it exactly matches your Cloudflare Tunnel public hostname and the webhook route (`https://api.<your-domain>.com/api/v1/brightdata-webhook`).
+- **Allow for Processing Time:** Remember that BrightData's asynchronous processing can take time. While often within minutes, it can take up to 8 hours during peak periods. Refer to the [BrightData documentation](https://docs.brightdata.com/scraping-automation/serp-api/asynchronous-requests) on asynchronous requests for more details on expected delays. If all configurations appear correct, you may just need to wait longer for BrightData to send the callbacks.

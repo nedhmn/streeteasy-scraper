@@ -17,3 +17,93 @@ hero:
       attrs:
         target: _blank
 ---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+## Why Use StreetEasy Scraper?
+
+This project provides a powerful and adaptable framework for gathering real estate data from StreetEasy. Whether for analysis, research, or building custom applications, the StreetEasy Scraper simplifies the data collection process with features like:
+
+<CardGrid stagger>
+  <Card title="BrightData Integration" icon="puzzle">
+    Leverage BrightData's Web Unlocker to handle complex website defenses like
+    CAPTCHAs at scale.
+  </Card>
+  <Card title="Flexible Scraping Methods" icon="setting">
+    Choose the method that fits your needs: **Synchronous** for immediate
+    results with a simpler setup, or **Asynchronous** for scale and higher
+    success rates.
+  </Card>
+  <Card title="Concurrent Sync Processing" icon="document">
+    The synchronous profile leverages **multithreading** to process multiple
+    addresses in parallel for faster results at smaller scale.
+  </Card>
+  <Card title="Efficient Async Workflow" icon="rocket">
+    An asynchronous workflow with a **FastAPI webhook** and background
+    processing handles BrightData callbacks for scalable and reliable data
+    collection.
+  </Card>
+  <Card title="Secure Tunneling" icon="cloudflare">
+    Use **Cloudflared tunnels** to securely expose your webhook to the public
+    internet without opening inbound firewall ports.
+  </Card>
+  <Card title="Enhanced Security" icon="seti:lock">
+    Implement robust **Cloudflare IP whitelisting and SSL/TLS encryption** to
+    protect your webhook endpoint.
+  </Card>
+  <Card title="Robust Database" icon="seti:db">
+    Store and manage your addresses and scraped data reliably using a
+    **PostgreSQL** database.
+  </Card>
+  <Card title="Simplified Deployment" icon="seti:docker">
+    Easily deploy and manage all project services using **Docker Compose** with
+    distinct profiles for synchronous and asynchronous modes.
+  </Card>
+</CardGrid>
+
+## How it Works
+
+The StreetEasy Scraper operates by:
+
+1.  **Providing Addresses:** Either seed the database with addresses from nyc.gov using the built-in tool, or add your own list of addresses to the database.
+2.  **Scraping Data:** Run either the synchronous or asynchronous scraper profile to collect data from StreetEasy for the provided addresses, using BrightData Web Unlocker.
+3.  **Storing Results:** Scraped data is saved directly into the PostgreSQL database, associated with the original address.
+
+The asynchronous workflow adds complexity with a dedicated webhook to receive callbacks from BrightData when a job is ready, and a background process to fetch and process the results.
+
+## Ready to Get Started?
+
+Our documentation will guide you through every step, from initial setup to running scraping jobs and accessing your data.
+
+<CardGrid>
+  <LinkCard
+    title="Installation"
+    href="/streeteasy-scraper-monorepo/getting-started/installation/"
+    description="Learn how to get the project files and prerequisites set up."
+  />
+  <LinkCard
+    title="Providing Addresses"
+    href="/streeteasy-scraper-monorepo/guides/providing-addresses-for-scraping/"
+    description="Add your own addresses to the database for scraping."
+  />
+  <LinkCard
+    title="Setting up Sync Profile"
+    href="/streeteasy-scraper-monorepo/getting-started/configuration/"
+    description="Configure the essential settings for the synchronous quickstart."
+  />
+  <LinkCard
+    title="Running the Sync Profile"
+    href="/streeteasy-scraper-monorepo/getting-started/running-the-sync-profile/"
+    description="Start your first scrape using the synchronous Docker profile."
+  />
+  <LinkCard
+    title="Setting up Async Profile"
+    href="/streeteasy-scraper-monorepo/guides/setting-up-the-async-profile/"
+    description="Configure BrightData and Cloudflare for the asynchronous workflow."
+  />
+  <LinkCard
+    title="Running the Async Profile"
+    href="/streeteasy-scraper-monorepo/guides/running-the-async-profile/"
+    description="Learn how to start and monitor the asynchronous scraping process."
+  />
+</CardGrid>

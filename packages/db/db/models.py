@@ -22,13 +22,13 @@ class BaseModel(Base):
         UUID, primary_key=True, nullable=False, server_default=text("gen_random_uuid()")
     )
     created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False, default=text("now()")
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=text("now()"),
-        onupdate=text("now()"),
+        server_default=text("now()"),
+        server_onupdate=text("now()"),
     )
 
 
@@ -59,6 +59,6 @@ class Address(BaseModel):
     )
     status: Mapped[Status] = mapped_column(
         nullable=False,
-        default="pending",
+        server_default="pending",
         comment="The current processing status of the address lookup job.",
     )

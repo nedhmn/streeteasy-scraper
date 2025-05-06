@@ -1,0 +1,95 @@
+---
+title: Providing Addresses for Scraping
+description: Learn how to get addresses into the database for the scraper to process.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The `streeteasy-scraper-monorepo` processes addresses stored in its PostgreSQL database. This guide explains how addresses initially get into the database and how you can add your own addresses for scraping.
+
+## How Addresses Get Into the Database
+
+By default, when you run either the synchronous or asynchronous Docker Compose profile for the first time, the `prestart` service executes the `run_address_scraper` script. This script automatically:
+
+1.  Scrapes initial addresses from nyc.gov's [Class B Multiple Dwellings List](https://www.nyc.gov/site/specialenforcement/reporting-law/class-b-mdl.page).
+2.  Saves the first 500 addresses to the database with a "pending" status.
+
+This initial seeding provides a quick way to get started.
+
+## Adding Your Own Addresses
+
+You can add your own list of addresses to the database for the scraper to process. The scraper applications (`sync_scraper` and `async_scraper`) look for addresses with a "pending" status in the database.
+
+The most straightforward way to add your own addresses is programmatically using a simple Python script that connects to the locally exposed database.
+
+### Method: Adding Addresses via a Python Script
+
+You will need a Python script that uses a library like SQLAlchemy to connect to your PostgreSQL database and insert records into the `addresses` table.
+
+You can connect to the database using the credentials defined in your `.env` file from the [Configuration](../../getting-started/configuration/#database-configuration) section. Use `localhost` for the host and `5432` for the port.
+
+Here's a basic example of a Python script to add addresses:
+
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+
+class Base(DeclarativeBase):
+    pass
+
+class Address(Base):
+    __tablename__ = "addresses"
+    input_address = Mapped[str] = mapped_column(nullable=False)
+
+def add_addresses_to_db(address_list: list[str]):
+    # This will be the database url if using the docker compose postgres example
+    engine = create_engine("postgresql://user:password@localhost:5432/user")
+    SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+
+    with SessionLocal() as session:
+        addresses_to_add = [Address(input_address=address) for address in address_list]
+        session.add_all(addresses_to_add)
+        session.commit()
+
+    print(f"Added {len(addresses_to_add)} addresses to the database.")
+
+if __name__ == "__main__":
+    # List of addresses you want to add. Can also pull from a local csv file.
+    my_addresses = ["Address 1", "Address 2"]
+    add_addresses_to_db(my_addresses)
+```
+
+To use this method:
+
+1. Save the code above as a Python file on your local machine and edit how you'll source your addresses.
+2. Ensure the `db` Docker Compose service is running (`docker ps -a`).
+3. Run the script.
+
+You only need to provide the input_address value when creating the Address objects. The database will automatically handle the `id`, `status`, `created_at`, and `updated_at`. Setting the `status` to `"pending"` is crucial for the scraper to pick up the job.
+
+## Triggering Scraping After Adding Addresses
+
+Once you have added new addresses with a "pending" status to the database, ensure the relevant scraper service is running to pick them up:
+
+- **Synchronous Profile**: The `sync_scraper` service polls the database for new "pending" jobs. If the `sync_scraper` container is running (`docker ps -a`), newly added addresses should be picked up automatically. If the `sync_scraper` container is not running or has exited, restart it:
+
+```bash
+docker compose --profile sync up -d
+```
+
+- **Asynchronous Profile**: The `async_scraper` includes a script (`run_async_submit_jobs.py`) that finds pending jobs and submits them. If you add addresses while the `async_scraper` service is running, you should restart it to ensure the submit script runs again and picks up the new pending addresses:
+
+```bash
+docker compose --profile async up -d
+```
+
+With addresses added and the relevant scraper service running (or restarted for async), the scraping process for your added addresses will begin according to the active profile.
+
+<Aside type="note">
+  Don't worry about the default address seeding running again if you've already
+  added addresses. The `prestart` service's `address_scraper` script is designed
+  to check if the database already contains addresses and will exit without
+  re-seeding if it finds any existing records in the `addresses` table.
+</Aside>
+
+Congratulations! Once the scraper has processed the addresses, you'll see the results appear in the database.
