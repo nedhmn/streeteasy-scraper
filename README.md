@@ -11,6 +11,7 @@ The **StreetEasy Scraper** is a flexible and scalable data collection project de
 
 ## ✨ Features
 
+- **Monorepo Structure:** Organized as a **monorepo** using `uv` workspaces, facilitating shared code (packages) and independent applications.
 - **Flexible Scraping Methods:** Choose between a simple **synchronous** multi-threaded approach or a scalable **asynchronous** workflow leveraging BrightData callbacks.
 - **BrightData Integration:** Seamlessly integrates with BrightData's Web Unlocker for handling complex scraping challenges at scale.
 - **Efficient Asynchronous Workflow:** Utilizes a dedicated **FastAPI webhook** and background processing for reliable callback handling and data processing.
