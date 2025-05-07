@@ -41,7 +41,7 @@ class AddressExtractor:
 
         # Anchor tag pattern to find xls url
         pattern = re.compile(
-            r"^/assets/specialenforcement/downloads/excel/class-b-multiple-dwelling-list-amended-\d{2}-\d{2}-\d{2}\.xlsx$"
+            r"^/assets/specialenforcement/downloads/excel/class-b-multiple-dwelling-list-amended-.*\.xlsx$"
         )
 
         soup = bs4.BeautifulSoup(response.content, "html.parser")
