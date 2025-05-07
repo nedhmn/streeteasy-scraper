@@ -1,9 +1,9 @@
-# StreetEasy Scraper Monorepo
+# StreetEasy Scraper
 
-[![Documentation](https://img.shields.io/badge/Documentation-Link-blue)](https://nedhmn.github.io/streeteasy-scraper-monorepo/)
+[![Documentation](https://img.shields.io/badge/Documentation-Link-blue)](https://nedhmn.github.io/streeteasy-scraper/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-The **StreetEasy Scraper** is a flexible and scalable data collection project designed to scrape property listing information from StreetEasy.com and manage the scraping process using a PostgreSQL database.
+The **StreetEasy Scraper** is a flexible and scalable data collection monorepo designed to scrape property listing information from StreetEasy.com and manage the scraping process using a PostgreSQL database.
 
 <div align="center" style="margin-bottom: 20px">
     <img src="./docs/src/assets/scraper-hero.png" alt="Scraper mascot hero section" height="350px">
@@ -32,8 +32,8 @@ You will need **Docker** and **Docker Compose** installed on your machine.
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/nedhmn/streeteasy-scraper-monorepo.git
-cd streeteasy-scraper-monorepo
+git clone https://github.com/nedhmn/streeteasy-scraper.git
+cd streeteasy-scraper
 ```
 
 ### Configure Environmental Variables
@@ -45,7 +45,7 @@ cp .env.example .env
 # Edit the .env file with your credentials
 ```
 
-Refer to the **[Configuration section in the documentation](https://nedhmn.github.io/streeteasy-scraper-monorepo/getting-started/configuration/)** for detailed instructions on all environment variables.
+Refer to the **[Configuration section in the documentation](https://nedhmn.github.io/streeteasy-scraper/getting-started/configuration/)** for detailed instructions on all environment variables.
 
 ### Build and Run with Docker Compose (Sync Profile)
 
@@ -55,7 +55,7 @@ docker-compose --profile sync up --build
 
 This command will build the necessary images, start the PostgreSQL database, run the prestart script (which includes initial address seeding), and launch the synchronous scraper.
 
-For detailed information on the asynchronous setup, system architecture, providing addresses, and accessing scraped data, please refer to the **[full documentation](https://nedhmn.github.io/streeteasy-scraper-monorepo/)**.
+For detailed information on the asynchronous setup, system architecture, providing addresses, and accessing scraped data, please refer to the **[full documentation](https://nedhmn.github.io/streeteasy-scraper/)**.
 
 ## 📄 License
 

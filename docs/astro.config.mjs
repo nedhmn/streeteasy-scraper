@@ -5,7 +5,7 @@ import starlight from "@astrojs/starlight";
 // https://astro.build/config
 export default defineConfig({
   site: "https://nedhmn.github.io",
-  base: "/streeteasy-scraper-monorepo/",
+  base: "/streeteasy-scraper/",
   integrations: [
     starlight({
       title: "StreetEasy Scraper",
@@ -14,7 +14,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/nedhmn/streeteasy-scraper-monorepo",
+          href: "https://github.com/nedhmn/streeteasy-scraper",
         },
       ],
       sidebar: [

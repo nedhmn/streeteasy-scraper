@@ -9,7 +9,7 @@ Configuration is managed through environment variables loaded from a `.env` file
 
 ## Creating the `.env` File
 
-In the root directory of the `streeteasy-scraper-monorepo` project, create a new file named `.env`. You can copy the contents of the `.env.example` file as a starting point:
+In the root directory of the `streeteasy-scraper` project, create a new file named `.env`. You can copy the contents of the `.env.example` file as a starting point:
 
 ```bash
 cp .env.example .env
@@ -82,7 +82,7 @@ BOROUGHS_TO_KEEP=MANHATTAN
   Any configurations to `address_scraper` doesn't matter too much because
   there's a limit of 500 addresses to save to the database. If you want to
   remove this limit, it's at
-  [apps/address_scraper/scripts/run_address_scraper.py](https://github.com/nedhmn/streeteasy-scraper-monorepo/blob/main/apps/address_scraper/scripts/run_address_scraper.py)
+  [apps/address_scraper/scripts/run_address_scraper.py](https://github.com/nedhmn/streeteasy-scraper/blob/main/apps/address_scraper/scripts/run_address_scraper.py)
   line 35.
 </Aside>
 
